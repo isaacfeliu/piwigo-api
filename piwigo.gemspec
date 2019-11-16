@@ -13,7 +13,7 @@ Gem::Specification.new do |spec|
   spec.homepage      = "https://github.com/KKDad/ruby-piwigo"
   spec.license       = "MIT"
 
-  spec.metadata["allowed_push_host"] = "TODO: Set to 'http://mygemserver.com'"
+  spec.metadata["allowed_push_host"] = "https://rubygems.org"
 
   spec.metadata["homepage_uri"] = spec.homepage
   spec.metadata["source_code_uri"] = "https://github.com/KKDad/ruby-piwigo"
@@ -32,6 +32,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "minitest", "~> 5.0"
 
-  spec.add_runtime_dependency "logger"
-  spec.add_runtime_dependency "http"
+  spec.add_runtime_dependency "logger", "~>1.4"
+  spec.add_runtime_dependency "http", "~>4.2"
 end
