@@ -1,9 +1,9 @@
 PATH
   remote: .
   specs:
-    piwigo (0.1.0)
-      http
-      logger
+    piwigo-api (0.1.0)
+      http (~> 4.2)
+      logger (~> 1.4)
 
 GEM
   remote: https://rubygems.org/
@@ -41,7 +41,7 @@ PLATFORMS
 DEPENDENCIES
   bundler (~> 2.0)
   minitest (~> 5.0)
-  piwigo!
+  piwigo-api!
   rake (~> 10.0)
 
 BUNDLED WITH
