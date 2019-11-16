@@ -10,12 +10,12 @@ Gem::Specification.new do |spec|
 
   spec.summary       = %q{Ruby gem to interact with the Piwigo API}
   spec.description   = %q{Ruby gem to interact with the Piwigo API}
-  spec.homepage      = "https://github.com/kkdad/ruby-piwigo"
+  spec.homepage      = "https://github.com/kkdad/piwigo-api"
   spec.license       = "MIT"
 
   spec.metadata["homepage_uri"] = spec.homepage
-  spec.metadata["source_code_uri"] = "https://github.com/kkdad/piwigo-ruby"
-  spec.metadata["changelog_uri"] = "https://github.com/kkdad/piwigo-ruby/CHANGELOG.md"
+  spec.metadata["source_code_uri"] = "https://github.com/kkdad/piwigo-api"
+  spec.metadata["changelog_uri"] = "https://github.com/kkdad/piwigo-api/CHANGELOG.md"
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
