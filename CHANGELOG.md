@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+0.2.0 - 2019-11-17
+- Refactored the Session to make iteasier to use
+- Support adding/deleting & listing albums
 
 0.1.1 - 2019-11-16 
 - Initial Version, supports login/logout against a piwigo server

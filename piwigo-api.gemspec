@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Adrian Gilbert"]
   spec.email         = ["adrian@gilbert.ca"]
 
-  spec.summary       = %q{Ruby gem to interact with the Piwigo API}
-  spec.description   = %q{Ruby gem to interact with the Piwigo API}
+  spec.summary       = %q{Gem to interact with the Piwigo API}
+  spec.description   = %q{Piwigo is open source web application to manage your collection of photos, and other medias. Piwigo provides an API for interacting with it. This is a ruby-based client for interacting with a Piwigo instance using the Piwigo API.}
   spec.homepage      = "https://github.com/kkdad/piwigo-api"
   spec.license       = "MIT"
 

@@ -1,8 +1,8 @@
 # Piwigo-API
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/piwigo`. To experiment with that code, run `bin/console` for an interactive prompt.
+Piwigo is open source web application to manage your collection of photos, and other medias. Piwigo provides an API for interacting with it. 
 
-TODO: Delete this and the text above, and describe your gem
+This is a ruby-based client for interacting with a Piwigo instance using the Piwigo API.
 
 ## Installation
 
@@ -22,7 +22,32 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+Just include 'piwigo/session' and the related classes, then querying Piwigo is fairly quick and straightforward.
+
+# Get the second album and all of it's children
+
+
+```
+require 'piwigo/session'
+require 'piwigo/albums'
+
+session = Piwigo::Session.login('mypiwigo.fqdn', 'Adrian', 'mypassword', https: false) 
+unless session.nil? 
+    albums = Piwigo::Albums.list(session, album_id: 2, recursive: true)
+    albums.each { |album| p "#{album.id}, #{album.name} - # of photos: #{album.total_nb_images}" }
+end
+```
+
+# Add a new album
+```
+session = Piwigo::Session.login('10.100.230.78', 'Adrian', 'secret', https: false) 
+unless session.nil? 
+    album = Piwigo::Albums::Album.new
+    album.name = "My First Album"
+    album = Piwigo::Albums.add(session, album)
+end
+```
+
 
 ## Development
 
@@ -32,7 +57,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/kkdad/piwigo.
+Bug reports and pull requests are welcome on GitHub at https://github.com/kkdad/piwigo-ruby.
 
 ## License
 
