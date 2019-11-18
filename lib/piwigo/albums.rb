@@ -180,8 +180,6 @@ module Piwigo
                 logger.error "Album delete: #{e.messages}"
                 false
             end            
-        end         
-
-
+        end        
     end
 end    
