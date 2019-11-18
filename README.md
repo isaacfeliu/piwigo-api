@@ -1,5 +1,7 @@
 # Piwigo-API
 
+![](https://github.com/kkdad/piwigo-api/workflows/Ruby/badge.svg) ![](https://github.com/kkdad/piwigo-api/workflows/Ruby%20Gem/badge.svg) 
+
 Piwigo is open source web application to manage your collection of photos, and other medias. Piwigo provides an API for interacting with it. 
 
 This is a ruby-based client for interacting with a Piwigo instance using the Piwigo API.

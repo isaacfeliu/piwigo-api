@@ -6,8 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+0.2.1 - 2019-11-17
+- Added a documentation URL pointing to rubydoc.info
+- Added build badges
+
 0.2.0 - 2019-11-17
-- Refactored the Session to make iteasier to use
+- Refactored the Session to make it easier to use
 - Support adding/deleting & listing albums
 
 0.1.1 - 2019-11-16 
