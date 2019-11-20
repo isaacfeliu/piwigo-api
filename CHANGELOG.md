@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+0.4.0 - 2019-11-20
+- Add methods to check for the existance of a specific image and to upload images
+
 0.3.1 - 2019-11-20
 - Add a codecov.yaml for coverage reports
 

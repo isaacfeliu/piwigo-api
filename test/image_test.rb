@@ -1,16 +1,16 @@
-require "test_helper"
+require 'test_helper'
 
 class ImageTest < Minitest::Test
   def test_that_it_has_a_version_number
     refute_nil ::Piwigo::VERSION
   end
 
-  def test_image_list  
+  def test_image_list
     uri = MiniTest::Mock.new
     uri.expect(:nil?, false)
-    uri.expect(:host, "fakehost.fqdn")
-    uri.expect(:port, "8754")
-    uri.expect(:request_uri, "/ws.php")
+    uri.expect(:host, 'fakehost.fqdn')
+    uri.expect(:port, '8754')
+    uri.expect(:request_uri, '/ws.php')
 
     session = MiniTest::Mock.new
     session.expect(:uri, uri)
@@ -19,7 +19,6 @@ class ImageTest < Minitest::Test
     session.expect(:uri, uri)
 
     session.expect(:id, '2')
-    
 
     response = MiniTest::Mock.new
     response.expect(:code, '200')
@@ -28,25 +27,60 @@ class ImageTest < Minitest::Test
     httpclient = MiniTest::Mock.new
     httpclient.expect(:request, response, [Net::HTTP::Post])
 
+    Net::HTTP.stub(:new, httpclient) do
+      results = Piwigo::Images.getImages(session, album_id: 4)
 
-      Net::HTTP.stub(:new, httpclient) do
-        results = Piwigo::Images.getImages(session, album_id: 4)
+      refute results.nil?
+      images = results[:images]
+      refute images.nil?
+      assert images.size == 2
+      assert images[0].id == 39
+      assert images[0].name == 'pulirmen1'
+      paging = results[:paging]
+      refute paging.nil?
+    end
 
-        refute results.nil?
-        images = results[:images]
-        refute images.nil?
-        assert images.size == 2
-        assert images[0].id == 39
-        assert images[0].name == 'pulirmen1'
-        paging = results[:paging]
-        refute paging.nil?
-
-      end
-      uri.verify
-      session.verify
-      response.verify
-      httpclient.verify
+    uri.verify
+    session.verify
+    response.verify
+    httpclient.verify
   end
 
-  
+  def test_lookup
+    uri = MiniTest::Mock.new
+    uri.expect(:nil?, false)
+    uri.expect(:host, 'fakehost.fqdn')
+    uri.expect(:port, '8754')
+    uri.expect(:request_uri, '/ws.php')
+
+    session = MiniTest::Mock.new
+    session.expect(:uri, uri)
+    session.expect(:uri, uri)
+    session.expect(:uri, uri)
+    session.expect(:uri, uri)
+
+    session.expect(:id, '2')
+
+    response = MiniTest::Mock.new
+    response.expect(:code, '200')
+    response.expect(:body, '{"stat":"ok","result":{"c8e8758dbfab0f0fa14c44edee1da8ad":"319"}}')
+
+    httpclient = MiniTest::Mock.new
+    httpclient.expect(:request, response, [Net::HTTP::Post])
+
+    file = 'fakeimage.png'
+    File.stub(:binread, 'fakeimage file contents') do
+      Net::HTTP.stub(:new, httpclient) do
+        results = Piwigo::Images.Lookup(session, file)
+
+        refute results.nil?
+        assert results == '319'
+      end
+    end
+
+    uri.verify
+    session.verify
+    response.verify
+    httpclient.verify
+  end
 end

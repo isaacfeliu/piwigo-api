@@ -1,16 +1,16 @@
-require "test_helper"
+require 'test_helper'
 
 class AlbumsTest < Minitest::Test
   def test_that_it_has_a_version_number
     refute_nil ::Piwigo::VERSION
   end
 
-  def test_album_list  
+  def test_album_list
     uri = MiniTest::Mock.new
     uri.expect(:nil?, false)
-    uri.expect(:host, "fakehost.fqdn")
-    uri.expect(:port, "8754")
-    uri.expect(:request_uri, "/ws.php")
+    uri.expect(:host, 'fakehost.fqdn')
+    uri.expect(:port, '8754')
+    uri.expect(:request_uri, '/ws.php')
 
     session = MiniTest::Mock.new
     session.expect(:uri, uri)
@@ -19,7 +19,6 @@ class AlbumsTest < Minitest::Test
     session.expect(:uri, uri)
 
     session.expect(:id, '2')
-    
 
     response = MiniTest::Mock.new
     response.expect(:code, '200')
@@ -28,30 +27,27 @@ class AlbumsTest < Minitest::Test
     httpclient = MiniTest::Mock.new
     httpclient.expect(:request, response, [Net::HTTP::Post])
 
+    Net::HTTP.stub(:new, httpclient) do
+      albums = Piwigo::Albums.list(session)
 
-      Net::HTTP.stub(:new, httpclient) do
-        albums = Piwigo::Albums.list(session)
-
-        refute albums.nil?
-        assert albums.size == 1
-        assert albums[0].id == 18
-        assert albums[0].name == 'Gatineau'
-        assert albums[0].status == 'public'
-
-      end
-      uri.verify
-      session.verify
-      response.verify
-      httpclient.verify
+      refute albums.nil?
+      assert albums.size == 1
+      assert albums[0].id == 18
+      assert albums[0].name == 'Gatineau'
+      assert albums[0].status == 'public'
+    end
+    uri.verify
+    session.verify
+    response.verify
+    httpclient.verify
   end
-
 
   def test_album_add
     uri = MiniTest::Mock.new
     uri.expect(:nil?, false)
-    uri.expect(:host, "fakehost.fqdn")
-    uri.expect(:port, "8754")
-    uri.expect(:request_uri, "/ws.php")
+    uri.expect(:host, 'fakehost.fqdn')
+    uri.expect(:port, '8754')
+    uri.expect(:request_uri, '/ws.php')
 
     session = MiniTest::Mock.new
     session.expect(:uri, uri)
@@ -60,7 +56,6 @@ class AlbumsTest < Minitest::Test
     session.expect(:uri, uri)
 
     session.expect(:id, '2')
-    
 
     response = MiniTest::Mock.new
     response.expect(:code, '200')
@@ -69,29 +64,26 @@ class AlbumsTest < Minitest::Test
     httpclient = MiniTest::Mock.new
     httpclient.expect(:request, response, [Net::HTTP::Post])
 
+    Net::HTTP.stub(:new, httpclient) do
+      album = Piwigo::Albums::Album.new
+      album.name = 'My First Album'
+      album = Piwigo::Albums.add(session, album)
 
-      Net::HTTP.stub(:new, httpclient) do
-        album = Piwigo::Albums::Album.new
-        album.name = "My First Album"
-        album = Piwigo::Albums.add(session, album)
-    
-        refute album.nil?
-        assert album.id == 19
-
-      end
-      uri.verify
-      session.verify
-      response.verify
-      httpclient.verify
-  end  
-
+      refute album.nil?
+      assert album.id == 19
+    end
+    uri.verify
+    session.verify
+    response.verify
+    httpclient.verify
+  end
 
   def test_album_delete
     uri = MiniTest::Mock.new
     uri.expect(:nil?, false)
-    uri.expect(:host, "fakehost.fqdn")
-    uri.expect(:port, "8754")
-    uri.expect(:request_uri, "/ws.php")
+    uri.expect(:host, 'fakehost.fqdn')
+    uri.expect(:port, '8754')
+    uri.expect(:request_uri, '/ws.php')
 
     session = MiniTest::Mock.new
     session.expect(:uri, uri)
@@ -100,7 +92,7 @@ class AlbumsTest < Minitest::Test
     session.expect(:uri, uri)
 
     session.expect(:id, '2')
-    session.expect(:pwg_token, 'pwg_token')    
+    session.expect(:pwg_token, 'pwg_token')
 
     response = MiniTest::Mock.new
     response.expect(:code, '200')
@@ -109,17 +101,14 @@ class AlbumsTest < Minitest::Test
     httpclient = MiniTest::Mock.new
     httpclient.expect(:request, response, [Net::HTTP::Post])
 
+    Net::HTTP.stub(:new, httpclient) do
+      result = Piwigo::Albums.delete(session, 19)
 
-      Net::HTTP.stub(:new, httpclient) do
-        result = Piwigo::Albums.delete(session, 19)
-    
-        assert result
-
-      end
-      uri.verify
-      session.verify
-      response.verify
-      httpclient.verify
-  end    
-
+      assert result
+    end
+    uri.verify
+    session.verify
+    response.verify
+    httpclient.verify
+  end
 end

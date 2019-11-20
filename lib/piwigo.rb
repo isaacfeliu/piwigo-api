@@ -1,4 +1,4 @@
-require "piwigo/version"
+require 'piwigo/version'
 
 module Piwigo
   class Error < StandardError; end

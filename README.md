@@ -1,6 +1,6 @@
 # Piwigo-API
 
-![](https://github.com/kkdad/piwigo-api/workflows/Ruby/badge.svg) ![](https://github.com/kkdad/piwigo-api/workflows/Ruby%20Gem/badge.svg) [![Gem Version](https://badge.fury.io/rb/piwigo-api.svg)](https://badge.fury.io/rb/piwigo-api)
+![](https://github.com/kkdad/piwigo-api/workflows/Ruby/badge.svg)  [![codecov](https://codecov.io/gh/KKDad/piwigo-api/branch/master/graph/badge.svg)](https://codecov.io/gh/KKDad/piwigo-api)  ![](https://github.com/kkdad/piwigo-api/workflows/Ruby%20Gem/badge.svg) [![Gem Version](https://badge.fury.io/rb/piwigo-api.svg)](https://badge.fury.io/rb/piwigo-api)  
 
 [Piwigo](https://piwigo.org/) is open source web application to manage your collection of photos, and other medias. Piwigo provides an API for interacting with it. 
 
@@ -24,9 +24,9 @@ Or install it yourself as:
 
 ## Usage
 
-Just include 'piwigo/session' and the related classes, then querying Piwigo is fairly quick and straightforward.
+Just include 'piwigo/session' and the related classes, then querying Piwigo is fairly quick and straightforward. The latest RubyDocs for [piwigo-api](https://rubydoc.info/github/KKDad/piwigo-api) can be loacated on [rubydoc.info](https://rubydoc.info).
 
-# Get the second album and all of it's children
+### Get the second album and all of it's children
 
 ```ruby
 require 'piwigo/session'
@@ -39,7 +39,7 @@ unless session.nil?
 end
 ```
 
-# Add a new album
+### Add a new album
 ```ruby
 require 'piwigo/session'
 require 'piwigo/albums'
@@ -52,7 +52,7 @@ unless session.nil?
 end
 ```
 
-# List the Contents of an Album
+### List the Contents of an Album
 
 ```ruby
 require 'piwigo/session'
@@ -61,7 +61,6 @@ require 'piwigo/images'
 session = Piwigo::Session.login('mypiwigo.fqdn', 'Adrian', 'mypassword', https: false) 
 unless session.nil? 
     results = Piwigo::Images.getImages(session, album_id: 4)
-   
     results[:images].each { |image| p "#{image.id}, #{image.name} - #{image.element_url}" }
 end
 ```

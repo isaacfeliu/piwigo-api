@@ -1,0 +1,18 @@
+Style/Encoding:
+  Enabled: false
+
+Metrics/LineLength:
+  Max: 200
+  
+Metrics/CyclomaticComplexity:
+  Max: 15
+
+Metrics/AbcSize:
+  Max: 40
+
+Metrics/MethodLength:
+  Max: 40
+
+AllCops:
+  Exclude:
+    - 'tests/*.rb'  
