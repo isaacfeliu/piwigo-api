@@ -1,13 +1,15 @@
+require 'simplecov'
+
+SimpleCov.start do
+  track_files '/lib/**/*.rb'
+end
+require 'minitest/autorun'
+require 'codecov'
+
 $LOAD_PATH.unshift File.expand_path('../lib', __dir__)
 require 'piwigo'
 require 'piwigo/session'
 require 'piwigo/albums'
 require 'piwigo/images'
 
-require 'minitest/autorun'
-
-require 'simplecov'
-SimpleCov.start
-
-require 'codecov'
 SimpleCov.formatter = SimpleCov::Formatter::Codecov
