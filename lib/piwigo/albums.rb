@@ -72,7 +72,7 @@ module Piwigo
     # @param [Logger] logger logger to output debug messages to (Optional)
     #
     # @return [Array<Album>] All albums that match the criteria, or nil there were no matches
-    def self.list(session, album_id: nil, recursive: false, public: false, fullname: false, thumbnail_size: 'thumb', logger: nil)
+    def self.list(session, album_id: nil, recursive: nil, public: nil, fullname: nil, thumbnail_size: nil, logger: nil)
       raise 'Invalid session' if session.uri.nil?
 
       logger ||= Logger.new(STDOUT)
@@ -80,7 +80,15 @@ module Piwigo
       begin
         http = Net::HTTP.new(session.uri.host, session.uri.port)
         request = Net::HTTP::Post.new(session.uri.request_uri)
-        request.body = "method=pwg.categories.getList&cat_id=#{album_id}&recursive=#{recursive}&public=#{public}&fullname=#{fullname}&thumbnail_size=#{thumbnail_size}"
+        form = {
+          method: 'pwg.categories.getList'
+        }
+        form[:cat_id] = album_id unless album_id.nil?
+        form[:recursive] = recursive unless recursive.nil?
+        form[:public] = public unless public.nil?
+        form[:fullname] = fullname unless fullname.nil?
+        form[:thumbnail_size] = thumbnail_size unless thumbnail_size.nil?
+        request.set_form_data(form)
         request['Cookie'] = [session.id]
 
         # Send the request
@@ -95,6 +103,21 @@ module Piwigo
         logger.error "Album List failed: #{e.messages}"
         nil
       end
+    end
+
+    # lookup a specific Album from a list of albums
+    #
+    # @param [<Type>] session
+    # @param [<Type>] album_name - Name of the album to locate
+    # @param [<Type>] logger <description>
+    #
+    # @return [<Type>] Album if located, nil otherwise
+    def self.lookup(session, album_name, logger: nil)
+      albums = list(session, recursive: true, fullname: false, logger: logger)
+      filtered = albums.select do |album|
+        album.name == album_name
+      end
+      filtered.size == 1 ? filtered[0] : nil
     end
 
     # Adds an album.
@@ -113,10 +136,14 @@ module Piwigo
       begin
         http = Net::HTTP.new(session.uri.host, session.uri.port)
         request = Net::HTTP::Post.new(session.uri.request_uri)
-        request.body = "method=pwg.categories.add&name=#{album.name}"
-        request.body.concat "&parent=#{album.id_uppercat}" unless album.id_uppercat.nil?
-        request.body.concat "&comment=#{album.comment}" unless album.comment.nil?
-        request.body.concat "&status=#{album.status}" unless album.status.nil?
+        form = {
+          method: 'pwg.categories.add',
+          name: album.name
+        }
+        form[:parent] = album.id_uppercat unless album.id_uppercat.nil?
+        form[:comment] = album.comment unless album.comment.nil?
+        form[:status] = album.status unless album.status.nil?
+        request.set_form_data(form)
         request['Cookie'] = [session.id]
 
         # Send the request

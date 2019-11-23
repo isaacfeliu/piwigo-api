@@ -1,3 +1,11 @@
+AllCops:
+  Exclude:
+    - 'tests/*.rb'    
+  TargetRubyVersion: 2.6
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
 Style/Encoding:
   Enabled: false
 
@@ -12,7 +20,3 @@ Metrics/AbcSize:
 
 Metrics/MethodLength:
   Max: 40
-
-AllCops:
-  Exclude:
-    - 'tests/*.rb'  

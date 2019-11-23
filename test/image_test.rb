@@ -71,7 +71,7 @@ class ImageTest < Minitest::Test
     file = 'fakeimage.png'
     File.stub(:binread, 'fakeimage file contents') do
       Net::HTTP.stub(:new, httpclient) do
-        results = Piwigo::Images.Lookup(session, file)
+        results = Piwigo::Images.lookup(session, file)
 
         refute results.nil?
         assert results == '319'

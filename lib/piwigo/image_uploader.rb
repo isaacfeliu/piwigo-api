@@ -30,7 +30,7 @@ module Piwigo
       # @param [<Type>] name of the image
       #
       # @return [Boolean] True if successful
-      def Upload(session, filename, name)
+      def upload(session, filename, name)
         @session = session
         raise 'Invalid session' if @session.uri.nil?
 
@@ -41,7 +41,7 @@ module Piwigo
         chunk_num = 0
         image_content = File.binread(filename)
         original_sum = Digest::MD5.hexdigest(image_content)
-        encoded_content = Base64.encode64(image_content)
+        encoded_content = image_content
         io = StringIO.new(encoded_content)
         until io.eof?
           chunk = io.read(MEGABYTE)
@@ -67,7 +67,7 @@ module Piwigo
           method: 'pwg.images.addChunk',
           original_sum: original_sum,
           position: position,
-          data: data
+          data: Base64.encode64(data)
         }
         request.set_form_data(form)
         request['Cookie'] = [@session.id]
@@ -81,7 +81,7 @@ module Piwigo
           false
         end
       rescue Timeout::Error, Errno::EINVAL, Errno::ECONNRESET, EOFError, Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError, Net::ProtocolError => e
-        @logger.error "Image AddChunk failed: #{e.messages}"
+        @logger.error "Image AddChunk failed: #{e.message}"
         false
       end
 
@@ -123,7 +123,7 @@ module Piwigo
 
         response = http.request(request)
         if response.code == '500'
-          @logger.error "Image Add failed: #{response.messages}"
+          @logger.error "Image Add failed: #{response.message}"
           false
         elsif response.code == '200'
           data = JSON.parse(response.body)
@@ -134,7 +134,7 @@ module Piwigo
           false
         end
       rescue Timeout::Error, Errno::EINVAL, Errno::ECONNRESET, EOFError, Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError, Net::ProtocolError => e
-        @logger.error "Image Add failed: #{e.messages}"
+        @logger.error "Image Add failed: #{e.message}"
         false
       end
     end

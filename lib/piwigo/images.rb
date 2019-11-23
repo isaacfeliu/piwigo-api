@@ -100,6 +100,7 @@ module Piwigo
         form[:recursive] = recursive unless recursive.nil?
         form[:per_page] = per_page unless per_page.nil?
         form[:order] = order unless order.nil?
+        form[:page] = page unless page.nil?
         request.set_form_data(form)
         request['Cookie'] = [session.id]
 
@@ -113,7 +114,7 @@ module Piwigo
           { paging: paging, images: images }
         end
       rescue Timeout::Error, Errno::EINVAL, Errno::ECONNRESET, EOFError, Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError, Net::ProtocolError => e
-        logger.error "Image List failed: #{e.messages}"
+        logger.error "Image List failed: #{e.message}"
         nil
       end
     end
@@ -125,8 +126,8 @@ module Piwigo
     # @param [<Type>] name of the image
     #
     # @return [Boolean] True if successful
-    def self.Upload(session, file, name)
-      ImageUploader.new(session, file, name).Upload
+    def self.upload(session, file, name)
+      ImageUploader.new(session, file, name).upload
     end
 
     # Checks existence of images
@@ -136,7 +137,7 @@ module Piwigo
     # @param [Logger] logger
     #
     # @return [Number] Piwigo image_id if matched, nil if not present
-    def self.Lookup(session, file, logger: nil)
+    def self.lookup(session, file, logger: nil)
       raise 'Invalid session' if session.uri.nil?
 
       logger ||= Logger.new(STDOUT)
@@ -158,11 +159,12 @@ module Piwigo
         response = http.request(request)
         if response.code == '200'
           data = JSON.parse(response.body)
-          logger.info "Image Lookup succeeded: #{data['result']}"
-          data['result'][file_sum]
+          logger.info "Image lookup succeeded: #{data['result']}"
+          result = data['result'][file_sum]
+          result.nil? ? nil : result[file_sum]
         end
       rescue Timeout::Error, Errno::EINVAL, Errno::ECONNRESET, EOFError, Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError, Net::ProtocolError => e
-        logger.error "Image Lookup failed: #{e.messages}"
+        logger.error "Image lookup failed: #{e.message}"
         nil
       end
     end

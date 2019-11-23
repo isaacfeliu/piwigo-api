@@ -1,7 +1,7 @@
 require 'simplecov'
 
 SimpleCov.start do
-  track_files '/lib/**/*.rb'
+  track_files '**/*.rb'
 end
 require 'minitest/autorun'
 require 'codecov'
