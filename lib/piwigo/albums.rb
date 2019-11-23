@@ -105,7 +105,7 @@ module Piwigo
       end
     end
 
-    # lookup a specific Album from a list of albums
+    # Lookup a specific Album from a list of albums
     #
     # @param [<Type>] session
     # @param [<Type>] album_name - Name of the album to locate

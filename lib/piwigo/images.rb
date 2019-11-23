@@ -154,14 +154,14 @@ module Piwigo
         }
         request.set_form_data(form)
         request['Cookie'] = [session.id]
+        p file_sum
 
         # Send the request
         response = http.request(request)
         if response.code == '200'
           data = JSON.parse(response.body)
           logger.info "Image lookup succeeded: #{data['result']}"
-          result = data['result'][file_sum]
-          result.nil? ? nil : result[file_sum]
+          data['result'][file_sum]
         end
       rescue Timeout::Error, Errno::EINVAL, Errno::ECONNRESET, EOFError, Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError, Net::ProtocolError => e
         logger.error "Image lookup failed: #{e.message}"

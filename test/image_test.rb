@@ -71,7 +71,7 @@ class ImageTest < Minitest::Test
     file = 'fakeimage.png'
     File.stub(:binread, 'fakeimage file contents') do
       Net::HTTP.stub(:new, httpclient) do
-        results = Piwigo::Images.lookup(session, file)
+        results = Piwigo::Images.lookup(session, file)       
 
         refute results.nil?
         assert results == '319'
@@ -83,4 +83,43 @@ class ImageTest < Minitest::Test
     response.verify
     httpclient.verify
   end
+
+  def test_lookup_not_present
+    uri = MiniTest::Mock.new
+    uri.expect(:nil?, false)
+    uri.expect(:host, 'fakehost.fqdn')
+    uri.expect(:port, '8754')
+    uri.expect(:request_uri, '/ws.php')
+
+    session = MiniTest::Mock.new
+    session.expect(:uri, uri)
+    session.expect(:uri, uri)
+    session.expect(:uri, uri)
+    session.expect(:uri, uri)
+
+    session.expect(:id, '2')
+
+    response = MiniTest::Mock.new
+    response.expect(:code, '200')
+    response.expect(:body, '{"stat":"ok","result":{"c8e8758dbfab0f0fa14c44edee1da8ad":null}}')
+
+    httpclient = MiniTest::Mock.new
+    httpclient.expect(:request, response, [Net::HTTP::Post])
+
+    file = 'fakeimage.png'
+    File.stub(:binread, 'fakeimage file contents') do
+      Net::HTTP.stub(:new, httpclient) do
+        results = Piwigo::Images.lookup(session, file)
+
+        assert results.nil?
+      end
+    end
+
+    uri.verify
+    session.verify
+    response.verify
+    httpclient.verify
+  end
+
+
 end
