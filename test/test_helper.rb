@@ -17,4 +17,7 @@ require 'piwigo/image_uploader'
 if ENV['CI'] == 'true'
   require 'codecov'
   SimpleCov.formatter = SimpleCov::Formatter::Codecov
+else
+  require 'minitest/reporters'
+  Minitest::Reporters.use! [Minitest::Reporters::SpecReporter.new(color: true)]    
 end

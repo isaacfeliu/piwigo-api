@@ -4,10 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-0.5.2 - 2019-11-25
+0.5.3 - 2019-11-25
 - Fixed to coverage reports
 - Only generate coverage reports during CI build
 - codecov.io seems to be ignoring some test files in the coverage report
+- Use EXIF data to pull out the original image date when uploading to Piwigo
 
 0.5.1 - 2019-11-23
 - Fixed minor bug in image.lookup

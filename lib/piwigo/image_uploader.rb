@@ -48,10 +48,7 @@ module Piwigo
           addChunk(chunk, original_sum, chunk_num)
           chunk_num += 1
         end
-        attributes = {}
-        attributes[:categories] = album.id unless album.nil?
-        fs = File::Stat.new(filename)
-        attributes[:date_creation] = fs.ctime.strftime("%Y-%m-%d")
+        attributes = sniff_attributes(filename, album: album)
         add(original_sum, filename, name, attributes: attributes)
       end
 
@@ -144,6 +141,30 @@ module Piwigo
         @logger.error "Image Add failed: #{e.message}"
         false
       end
+
+      def sniff_attributes(filename, album: nil)
+        attributes = {}
+
+        info = EXIFR::JPEG.new(filename)
+        @logger.info "--> GPS: #{info.gps.latitude}, #{info.gps.longitude}"
+        exif = info.exif.first.to_hash if info.exif?
+        if exif.nil?
+          # No EXIF data, use the file ctime as the date_creation
+          fs = File::Stat.new(filename)
+          attributes[:date_creation] = fs.ctime.strftime('%Y-%m-%d')
+        else
+          # We have EXIF data, pull out the date_time_original for the date_creation
+          attributes[:date_creation] = exif[:date_time_original].strftime('%Y-%m-%d')
+          # exif.each do |item|
+          #   @logger.info "--> #{item[0]}: #{item[1]}"
+          # end
+        end
+
+        attributes[:categories] = album.id unless album.nil?
+        attributes
+      end
     end
+
+
   end
 end

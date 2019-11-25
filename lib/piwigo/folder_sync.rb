@@ -1,5 +1,6 @@
 require 'logger'
 require 'find'
+require 'exifr/jpeg'
 require_relative 'albums'
 require_relative 'image_uploader'
 

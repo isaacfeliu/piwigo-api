@@ -30,9 +30,11 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'bundler', '~> 2.0'
   spec.add_development_dependency 'codecov', '>= 0.1.10'
   spec.add_development_dependency 'minitest', '~> 5.0'
+  spec.add_development_dependency 'minitest-reporters', '~>1.4'
   spec.add_development_dependency 'rake', '~> 10.0'
   spec.add_development_dependency 'simplecov', '~> 0.17'
 
   spec.add_runtime_dependency 'http', '~>4.2'
   spec.add_runtime_dependency 'logger', '~>1.4'
+  spec.add_runtime_dependency 'exifr', '~>1.3'
 end
