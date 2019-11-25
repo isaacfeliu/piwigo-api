@@ -47,7 +47,7 @@ module Piwigo
           synchronize directory_entry
         else
           @logger.info "Processing Image: #{directory_entry} in album '#{@current_album}''"
-          image = Piwigo::Images::lookup(@session, directory_entry)
+          image = Piwigo::Images.lookup(@session, directory_entry)
           if image.nil?
             Piwigo::Images::ImageUploader.new(logger: @logger).upload(@session, directory_entry, File.basename(directory_entry))
           end

@@ -179,5 +179,4 @@ class AlbumsTest < Minitest::Test
     response.verify
     httpclient.verify
   end
-
 end
