@@ -154,7 +154,6 @@ module Piwigo
         }
         request.set_form_data(form)
         request['Cookie'] = [session.id]
-        p file_sum
 
         # Send the request
         response = http.request(request)

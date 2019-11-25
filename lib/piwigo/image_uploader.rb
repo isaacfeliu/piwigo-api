@@ -30,7 +30,7 @@ module Piwigo
       # @param [<Type>] name of the image
       #
       # @return [Boolean] True if successful
-      def upload(session, filename, name)
+      def upload(session, filename, name, album: null)
         @session = session
         raise 'Invalid session' if @session.uri.nil?
 
@@ -48,7 +48,11 @@ module Piwigo
           addChunk(chunk, original_sum, chunk_num)
           chunk_num += 1
         end
-        add(original_sum, filename, name)
+        attributes = {}
+        attributes[:categories] = album.id unless album.nil?
+        fs = File::Stat.new(filename)
+        attributes[:date_creation] = fs.ctime.strftime("%Y-%m-%d")
+        add(original_sum, filename, name, attributes: attributes)
       end
 
       private
@@ -90,17 +94,20 @@ module Piwigo
       # @param [<Type>] original_sum - md5sum that makes the photo unique
       # @param [<Type>] original_filename
       # @param [<Type>] name
-      # @param [<Type>] author
-      # @param [Number] level - 0 (—-), 1 (Contacts), 2 (Friends), 4 (Family), 8 (Admins)
-      # @param [String] date_creation - formatted as 2009-03-26
-      # @param [<Type>] comment -
-      # @param [<Type>] categories - list of category identifiers where you want the photo to be shown. Optionaly, you can set a rank inside the each category.
-      #                              Example : '19,3;16,0;134' will associate the photo to category 19 at rank 3, to category 16 at rank 0 (first position) and
-      #                                        to category 134 with an automatic rank (last position).
-      # @param [<Type>] image_id - give an image_id if you want to update an existing photo
+      # @param [Hash] attributes - attributes to include with image add. Include:
+      #    author
+      #    level - 0 (—-), 1 (Contacts), 2 (Friends), 4 (Family), 8 (Admins)
+      #    date_creation - formatted as 2009-03-26
+      #    comment -
+      #    categories - list of category identifiers where you want the photo to be shown. Optionaly, you can set a rank inside the each category.
+      #                 Example : '19,3;16,0;134' will associate the photo to category 19 at rank 3, to category 16 at rank 0 (first position) and
+      #                           to category 134 with an automatic rank (last position).
+      #    image_id - give an image_id if you want to update an existing photo
       #
       # @return [Boolean] True if successful
-      def add(original_sum, original_filename, name, author: nil, level: nil, date_creation: nil, comment: nil, categories: nil, image_id: nil)
+      def add(original_sum, original_filename, name, attributes: {})
+
+        # name, author: nil, level: nil, date_creation: nil, comment: nil, categories: nil, image_id: nil
 
         http = Net::HTTP.new(@session.uri.host, @session.uri.port)
         request = Net::HTTP::Post.new(@session.uri.request_uri)
@@ -111,12 +118,12 @@ module Piwigo
           name: name
         }
 
-        form[:author] = author unless author.nil?
-        form[:level] = level unless level.nil?
-        form[:date_creation] = date_creation unless date_creation.nil?
-        form[:comment] = comment unless comment.nil?
-        form[:categories] = categories unless categories.nil?
-        form[:image_id] = image_id unless image_id.nil?
+        form[:author] = attributes[:author] if attributes.key? :author
+        form[:level] = attributes[:level] if attributes.key? :level
+        form[:date_creation] = attributes[:date_creation] if attributes.key? :date_creation
+        form[:comment] = comment attributes[:comment] if attributes.key? :comment
+        form[:categories] = attributes[:categories] if attributes.key? :categories
+        form[:image_id] = attributes[:image_id] if attributes.key? :image_id
         request.set_form_data(form)
 
         request['Cookie'] = [@session.id]

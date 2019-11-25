@@ -59,6 +59,10 @@ module Piwigo
       def initialize(hash: nil)
         hash&.each { |key, value| send("#{key}=", value) }
       end
+
+      def to_s
+        "#{name}(#{id})"
+      end
     end
 
     # Returns a list of albums

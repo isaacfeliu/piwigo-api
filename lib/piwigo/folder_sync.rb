@@ -32,27 +32,44 @@ module Piwigo
     def synchronize(directory)
       @logger.info "Processing Directory: #{directory}"
 
-      Find.find(directory) do |directory_entry|
-        next unless directory_entry != directory
+      Dir.entries(directory).reject { |entry| entry =~ /^.{1,2}$/ }.each do |directory_entry|
+        item_to_process = File.join directory, directory_entry
 
-        if directory != directory_entry && File.directory?(directory_entry)
-          @parent_album = @current_album
-          @current_album = Piwigo::Albums::lookup(@session, File.basename(directory_entry))
-            if @current_album.nil?
-              album = Piwigo::Albums::Album.new(hash: { 'name' =>  File.basename(directory_entry), 
-                                                        'id_uppercat' => @parent_album.nil? ? nil : @parent_album.id })
-              @current_album = Piwigo::Albums.add @session, album
-            end
-
-          synchronize directory_entry
+        if File.directory? item_to_process
+          process_directory item_to_process
         else
-          @logger.info "Processing Image: #{directory_entry} in album '#{@current_album}''"
-          image = Piwigo::Images.lookup(@session, directory_entry)
-          if image.nil?
-            Piwigo::Images::ImageUploader.new(logger: @logger).upload(@session, directory_entry, File.basename(directory_entry))
-          end
+          process_file item_to_process
         end
       end
+    end
+
+    private
+
+    def process_directory(directory_entry)
+      @logger.info "Processing #{directory_entry}"
+      @parent_album = @current_album
+      # Look to see if we have previously created an Album in Piwogo with this name
+      @current_album = Piwigo::Albums.lookup(@session, File.basename(directory_entry))
+
+      if @current_album.nil?
+        # Album doesn't exist, create one
+        new_album = { 'name' => File.basename(directory_entry),
+                      'id_uppercat' => @parent_album.nil? ? nil : @parent_album.id }
+        album = Piwigo::Albums::Album.new(hash: new_album)
+        @current_album = Piwigo::Albums.add @session, album
+      end
+
+      # Recursively process all of the entries in this album
+      @logger.info "Recursing into #{directory_entry}"
+      synchronize directory_entry
+    end
+
+    def process_file(directory_entry)
+      @logger.info "Processing Image: '#{directory_entry}' in album '#{@current_album}'"
+      image = Piwigo::Images.lookup(@session, directory_entry)
+      return unless image.nil?
+
+      Piwigo::Images::ImageUploader.new(logger: @logger).upload(@session, directory_entry, File.basename(directory_entry), album: @current_album)
     end
   end
 end
