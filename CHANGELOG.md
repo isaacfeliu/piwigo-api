@@ -7,10 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 0.5.2 - 2019-11-25
 - Fixed to coverage reports
 - Only generate coverage reports during CI build
-
-
-0.5.2 - 2019-11-24
-- codecov.io seems to be ignoring some test files in the cOverage report
+- codecov.io seems to be ignoring some test files in the coverage report
 
 0.5.1 - 2019-11-23
 - Fixed minor bug in image.lookup
