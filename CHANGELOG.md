@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+0.5.5 - 2019-11-26
+- Fix another encoding issue when synchronizing folder with accented characters.
+
 0.5.4 - 2019-11-26
 - Fix crash in sniff_attributes when the image dosn't contain a valid EXIF data
 - Fix parent albums when syncronizing a folder-tree of albums into Piwigo

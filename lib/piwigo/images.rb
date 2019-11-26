@@ -51,11 +51,15 @@ module Piwigo
       attr_accessor :categories
 
       def initialize(hash: nil)
-        hash&.each { |key, value| send("#{key}=", value) }
+        hash&.each do |key, value|
+          # Bug: If the encoding is Windows-1252, then Piwigo will blowup when creating the album
+          value = value.encode('UTF-8', 'Windows-1252') if value.class == String && value.encoding.to_s == 'Windows-1252'
+          send("#{key}=", value)
+        end
       end
     end
 
-    class Paging # rubocop:todo Style/Documentation
+    class Paging
       # @return [Number] Page number of the results
       attr_accessor :page
 
@@ -69,7 +73,11 @@ module Piwigo
       attr_accessor :total_count
 
       def initialize(hash: nil)
-        hash&.each { |key, value| send("#{key}=", value) }
+        hash&.each do |key, value|
+          # Bug: If the encoding is Windows-1252, then Piwigo will blowup when creating the album
+          value = value.encode('UTF-8', 'Windows-1252') if value.class == String && value.encoding.to_s == 'Windows-1252'
+          send("#{key}=", value)
+        end
       end
     end
 

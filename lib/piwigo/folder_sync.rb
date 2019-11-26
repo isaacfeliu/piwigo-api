@@ -39,7 +39,7 @@ module Piwigo
       end
 
       Dir.entries(directory).reject { |entry| entry =~ /^.{1,2}$/ }.each do |directory_entry|
-        item_to_process = File.join directory, directory_entry
+        item_to_process = (File.join directory, directory_entry).encode('utf-8')
 
         if File.directory? item_to_process
           @parent_album = ensure_album(File.dirname(item_to_process), nil)
