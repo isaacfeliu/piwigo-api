@@ -144,23 +144,31 @@ module Piwigo
 
       def sniff_attributes(filename, album: nil)
         attributes = {}
+        begin         
+          info = EXIFR::JPEG.new(filename)
+          @logger.info "--> GPS: #{info.gps.latitude}, #{info.gps.longitude}" unless info.gps.nil?
+          exif = info.exif.first.to_hash if info.exif?
+          if exif.nil?
+            # No EXIF data, use the file ctime as the date_creation
+            fs = File::Stat.new(filename)
+            @logger.info "--> File::Stat: #{fs.inspect}"
+            attributes[:date_creation] = fs.ctime.strftime('%Y-%m-%d')
+          elsif exif.key?(:date_time_original)
+            # We have EXIF data, pull out the date_time_original for the date_creation
+            attributes[:date_creation] = exif[:date_time_original].strftime('%Y-%m-%d')
 
-        info = EXIFR::JPEG.new(filename)
-        @logger.info "--> GPS: #{info.gps.latitude}, #{info.gps.longitude}"
-        exif = info.exif.first.to_hash if info.exif?
-        if exif.nil?
-          # No EXIF data, use the file ctime as the date_creation
-          fs = File::Stat.new(filename)
-          attributes[:date_creation] = fs.ctime.strftime('%Y-%m-%d')
-        else
-          # We have EXIF data, pull out the date_time_original for the date_creation
-          attributes[:date_creation] = exif[:date_time_original].strftime('%Y-%m-%d')
-          # exif.each do |item|
-          #   @logger.info "--> #{item[0]}: #{item[1]}"
-          # end
+            # if !exif.key? :date_time_original do
+            #   exif.each do |item|
+            #     @logger.info "--> #{item[0]}: #{item[1]}"
+            #   end
+            # end
+          end
+        rescue EXIFR::MalformedJPEG => e
+          @logger.error e.message
         end
 
         attributes[:categories] = album.id unless album.nil?
+        @logger.info attributes
         attributes
       end
     end

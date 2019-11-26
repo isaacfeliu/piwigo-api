@@ -3,6 +3,10 @@
 Upload a single image if it doesn't already exist. Image is not associated with any Albums. The image will named apple-pie-bars
 
 ```ruby
+require 'piwigo/session'
+require 'piwigo/images'
+
+
 session = Piwigo::Session.login('10.100.230.78', 'Adrian', 'mypassword', https: false)
 unless session.nil?
   filename = 'C:\photos\apple-pie-bars-articleLarge.jpg'

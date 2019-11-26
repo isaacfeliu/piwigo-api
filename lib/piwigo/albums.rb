@@ -57,7 +57,11 @@ module Piwigo
       attr_accessor :tn_url
 
       def initialize(hash: nil)
-        hash&.each { |key, value| send("#{key}=", value) }
+        hash&.each do |key, value|
+          # Bug: If the encoding is Windows-1252, then Piwigo will blowup when creating the album
+          value = value.encode('UTF-8', 'Windows-1252') if value.class == String && value.encoding.to_s == 'Windows-1252'
+          send("#{key}=", value)
+        end
       end
 
       def to_s
@@ -140,6 +144,7 @@ module Piwigo
       begin
         http = Net::HTTP.new(session.uri.host, session.uri.port)
         request = Net::HTTP::Post.new(session.uri.request_uri)
+        logger.info "Encoding: #{album.name} - #{album.name.encoding}"
         form = {
           method: 'pwg.categories.add',
           name: album.name
@@ -155,7 +160,7 @@ module Piwigo
         if response.code == '200'
           data = JSON.parse(response.body)
           album.id = data['result']['id']
-          logger.info "Album Add succeeded: #{album.id} created."
+          logger.info "Album Add succeeded: #{album.name}(#{album.id}) created."
           album
         end
       rescue Timeout::Error, Errno::EINVAL, Errno::ECONNRESET, EOFError, Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError, Net::ProtocolError => e
@@ -181,7 +186,7 @@ module Piwigo
       begin
         http = Net::HTTP.new(session.uri.host, session.uri.port)
         request = Net::HTTP::Post.new(session.uri.request_uri)
-        request.body = "method=pwg.categories.delete&category_id=#{id}"        
+        request.body = "method=pwg.categories.delete&category_id=#{id}"
         request.body.concat "&photo_deletion_mode=#{photo_deletion_mode}" unless photo_deletion_mode.nil?
         request.body.concat "&pwg_token=#{session.pwg_token}"
         request['Cookie'] = [session.id]
@@ -190,7 +195,7 @@ module Piwigo
         response = http.request(request)
         if response.code == '200'
           data = JSON.parse(response.body)
-          logger.info "Album Delete succeeded: #{data}"
+          logger.info "Album Delete succeeded: Album #{id} removed - #{data}"
           true
         else
           p response.code

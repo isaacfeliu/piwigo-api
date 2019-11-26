@@ -1,7 +1,7 @@
 require 'simplecov'
 
 SimpleCov.start do
-  add_filter "/test/"
+  add_filter '/test/'
   track_files '/**/*.rb'
 end
 
@@ -14,10 +14,10 @@ require 'piwigo/images'
 require 'piwigo/folder_sync'
 require 'piwigo/image_uploader'
 
-if ENV['CI'] == 'true'
+if !ENV['CODECOV_TOKEN'].nil?
   require 'codecov'
   SimpleCov.formatter = SimpleCov::Formatter::Codecov
 else
   require 'minitest/reporters'
-  Minitest::Reporters.use! [Minitest::Reporters::SpecReporter.new(color: true)]    
+  Minitest::Reporters.use! [Minitest::Reporters::SpecReporter.new(color: true)]
 end

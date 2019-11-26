@@ -31,13 +31,22 @@ module Piwigo
     #
     # @param [String] directory - directory to  syncronize.
     def synchronize(directory)
-      @logger.info "Processing Directory: #{directory}"
+      if ['originals', '.picasaoriginals'].include? File.basename(directory.downcase)
+        @logger.info "Skipping special directory: #{directory}"
+        return
+      else
+        @logger.info "Processing Directory: #{directory}"
+      end
 
       Dir.entries(directory).reject { |entry| entry =~ /^.{1,2}$/ }.each do |directory_entry|
         item_to_process = File.join directory, directory_entry
 
         if File.directory? item_to_process
-          process_directory item_to_process
+          @parent_album = ensure_album(File.dirname(item_to_process), nil)
+          @current_album = ensure_album(item_to_process, @parent_album)
+
+          # Recursively process all of the entries in this album
+          synchronize item_to_process
         else
           process_file item_to_process
         end
@@ -46,26 +55,28 @@ module Piwigo
 
     private
 
-    def process_directory(directory_entry)
-      @logger.info "Processing #{directory_entry}"
-      @parent_album = @current_album
-      # Look to see if we have previously created an Album in Piwogo with this name
-      @current_album = Piwigo::Albums.lookup(@session, File.basename(directory_entry))
+    def ensure_album(directory_entry, parent_album)
+      album_name = File.basename(directory_entry)
+      @logger.info "Ensuring Album #{album_name} exits"
+      return if ['/', '\\', ''].include? album_name
 
-      if @current_album.nil?
+      # Look to see if we have previously created an Album in Piwigo with this name
+      album = Piwigo::Albums.lookup(@session, album_name)
+
+      if album.nil?
         # Album doesn't exist, create one
-        new_album = { 'name' => File.basename(directory_entry),
-                      'id_uppercat' => @parent_album.nil? ? nil : @parent_album.id }
+        new_album = { 'name' => album_name,
+                      'id_uppercat' => parent_album.nil? ? nil : parent_album.id }
         album = Piwigo::Albums::Album.new(hash: new_album)
-        @current_album = Piwigo::Albums.add @session, album
+        album = Piwigo::Albums.add @session, album
       end
-
-      # Recursively process all of the entries in this album
-      @logger.info "Recursing into #{directory_entry}"
-      synchronize directory_entry
+      album
     end
 
     def process_file(directory_entry)
+      # Only attempt to import images
+      return unless ['.jpg', '.png', '.gif'].include? File.extname(directory_entry).downcase
+
       @logger.info "Processing Image: '#{directory_entry}' in album '#{@current_album}'"
       image = Piwigo::Images.lookup(@session, directory_entry)
       return unless image.nil?
