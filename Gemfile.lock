@@ -62,7 +62,7 @@ PLATFORMS
 
 DEPENDENCIES
   bundler (~> 2.0)
-  codecov (>= 0.1.10)
+  codecov (~> 0.1, >= 0.1.10)
   minitest (~> 5.0)
   minitest-reporters (~> 1.4)
   piwigo-api!
