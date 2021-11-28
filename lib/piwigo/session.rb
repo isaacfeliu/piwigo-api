@@ -32,7 +32,7 @@ module Piwigo
 
       begin
         # Create the HTTP objects
-        http = Net::HTTP.new(uri)
+        http = Net::HTTP.new(uri.host, uri.port)
         request = Net::HTTP::Post.new(uri.request_uri)
         form = {
           method: 'pwg.session.getStatus'
@@ -63,7 +63,7 @@ module Piwigo
       logger ||= Logger.new(STDOUT)
 
       # Create the HTTP objects
-      http = Net::HTTP.new(uri)
+      http = Net::HTTP.new(uri.host, uri.port)
       request = Net::HTTP::Get.new(uri.request_uri + '&method=pwg.session.logout')
       request['Cookie'] = id
 
@@ -87,10 +87,12 @@ module Piwigo
       logger ||= Logger.new(STDOUT)
 
       begin
-        uri = URI("#{host}/ws.php?format=json")
+        uri = https ? URI::HTTPS.build(host: host, path: '/ws.php', query: 'format=json') :
+                      URI::HTTP.build(host: host, path: '/ws.php', query: 'format=json')
 
         # Create the HTTP objects
-        http = Net::HTTP.new(uri)
+        http = Net::HTTP.new(uri.host, uri.port)
+        http.use_ssl = https
         request = Net::HTTP::Post.new(uri.request_uri)
         form = {
           method: 'pwg.session.login',
