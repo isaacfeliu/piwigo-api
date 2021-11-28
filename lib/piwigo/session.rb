@@ -92,6 +92,7 @@ module Piwigo
 
         # Create the HTTP objects
         http = Net::HTTP.new(uri.host, uri.port)
+        http.use_ssl = https
         request = Net::HTTP::Post.new(uri.request_uri)
         form = {
           method: 'pwg.session.login',
