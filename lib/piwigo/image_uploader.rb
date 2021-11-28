@@ -63,6 +63,7 @@ module Piwigo
       # @return [Boolean] true if successful
       def addChunk(data, original_sum, position)
         http = Net::HTTP.new(@session.uri.host, @session.uri.port)
+        http.use_ssl = session.uri.scheme == 'https'
         request = Net::HTTP::Post.new(@session.uri.request_uri)
         form = {
           method: 'pwg.images.addChunk',
@@ -107,6 +108,7 @@ module Piwigo
         # name, author: nil, level: nil, date_creation: nil, comment: nil, categories: nil, image_id: nil
 
         http = Net::HTTP.new(@session.uri.host, @session.uri.port)
+        http.use_ssl = @session.uri.scheme == 'https'
         request = Net::HTTP::Post.new(@session.uri.request_uri)
         form = {
           method: 'pwg.images.add',

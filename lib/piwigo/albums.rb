@@ -87,6 +87,7 @@ module Piwigo
 
       begin
         http = Net::HTTP.new(session.uri.host, session.uri.port)
+        http.use_ssl = session.uri.scheme == 'https'
         request = Net::HTTP::Post.new(session.uri.request_uri)
         form = {
           method: 'pwg.categories.getList'
@@ -143,6 +144,7 @@ module Piwigo
 
       begin
         http = Net::HTTP.new(session.uri.host, session.uri.port)
+        http.use_ssl = session.uri.scheme == 'https'
         request = Net::HTTP::Post.new(session.uri.request_uri)
         logger.info "Encoding: #{album.name} - #{album.name.encoding}"
         form = {
@@ -185,6 +187,7 @@ module Piwigo
 
       begin
         http = Net::HTTP.new(session.uri.host, session.uri.port)
+        http.use_ssl = session.uri.scheme == 'https'
         request = Net::HTTP::Post.new(session.uri.request_uri)
         request.body = "method=pwg.categories.delete&category_id=#{id}"
         request.body.concat "&photo_deletion_mode=#{photo_deletion_mode}" unless photo_deletion_mode.nil?

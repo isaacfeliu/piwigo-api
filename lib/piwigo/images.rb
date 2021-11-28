@@ -100,6 +100,7 @@ module Piwigo
 
       begin
         http = Net::HTTP.new(session.uri.host, session.uri.port)
+        http.use_ssl = session.uri.scheme == 'https'
         request = Net::HTTP::Post.new(session.uri.request_uri)
         form = {
           method: 'pwg.categories.getImages'
@@ -154,6 +155,7 @@ module Piwigo
 
       begin
         http = Net::HTTP.new(session.uri.host, session.uri.port)
+        http.use_ssl = session.uri.scheme == 'https'
         request = Net::HTTP::Post.new(session.uri.request_uri)
         form = {
           method: 'pwg.images.exist',
